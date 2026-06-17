@@ -3,7 +3,7 @@ provider "aws" {
   default_tags {
     tags = {
         Environment = "dev"
-        Project     = "PIP-project"
+        Project     = "demo-project"
         Owner       = "platform-team"
         ManagedBy   = "terraform"
     }

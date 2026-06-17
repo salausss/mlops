@@ -30,7 +30,7 @@ module "eks" {
   cluster_version         = 1.35
   subnet_ids              = module.vpc.private_subnet_ids
   kms_key_arn             = module.kms.key_arn
-  cluster_node_name       = "cluster_node_pip"
+  cluster_node_name       = "cluster_node_demo"
   application_node_name   = "application"
   database_node_name      = "database"
 }
@@ -70,18 +70,11 @@ module "storage" {
   kms_key_arn = module.kms.key_arn
 }
 
-module "application_deploy" {
-  source = "../../modules/app_deploy"
-}
+#module "application_deploy" {
+#  source = "../../modules/app_deploy"
+#}
 
-module "WAF" {
-  source = "../../modules/waf"
-  project_name = var.project_name
-  env = var.environment
-  alb_arn = module.application_deploy.alb_arn
-  rate_limit     = 1000
-  enable_logging = true
-}
+
 
 module "SecretsManager" {
   source = "../../modules/secrets-manager"
