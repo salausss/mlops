@@ -24,6 +24,53 @@ module "s3_bucket" {
   }
 }
 
+module "chat_session_history" {
+  source = "../../modules/dynamodb"
+
+  table_name    = "chat_session_history"
+  hash_key      = "session_id"
+  hash_key_type = "S"
+  range_key     = "timestamp"
+  range_key_type = "N"
+
+  ttl_attribute_name = "expires_at"
+
+  extra_attributes = [
+    { name = "user_id", type = "S" }
+  ]
+
+  global_secondary_indexes = [
+    {
+      name            = "user_id-index"
+      hash_key        = "user_id"
+      range_key       = "timestamp"
+      projection_type = "ALL"
+    }
+  ]
+}
+
+module "order_lookup" {
+  source = "../../modules/dynamodb"
+
+  table_name    = "order_lookup"
+  hash_key      = "order_id"
+  hash_key_type = "S"
+
+  extra_attributes = [
+    { name = "customer_id", type = "S" },
+    { name = "order_date", type = "N" }
+  ]
+
+  global_secondary_indexes = [
+    {
+      name            = "customer_id-index"
+      hash_key        = "customer_id"
+      range_key       = "order_date"
+      projection_type = "ALL"
+    }
+  ]
+}
+
 module "ecr" {
   source = "../../modules/ecr"
   repository_names = ["frontend","backend"]
