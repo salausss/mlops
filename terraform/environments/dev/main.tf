@@ -10,6 +10,20 @@ module "vpc" {
   cluster_name          = var.project_name
 }
 
+module "s3_bucket" {
+  source      = "../../s3-module"
+  bucket_name = "mlops-dev-uploads"
+
+  versioning_enabled   = true
+  enable_encryption    = true
+  block_public_access  = true
+
+  tags = {
+    Project     = "TaskFlow"
+    Environment = "dev"
+  }
+}
+
 module "ecr" {
   source = "../../modules/ecr"
   repository_names = ["frontend","backend"]
