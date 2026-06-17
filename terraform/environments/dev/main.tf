@@ -9,7 +9,7 @@ module "vpc" {
   private_subnet_cidrs  = ["10.1.11.0/24", "10.1.12.0/24"]
   cluster_name          = var.project_name
 }
-
+ 
 module "s3_bucket" {
   source      = "../../modules/s3"
   bucket_name = "mlops-dev-uploads"
