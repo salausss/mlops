@@ -6,6 +6,7 @@ data "aws_caller_identity" "current" {}
 
 data "aws_eks_cluster" "primary" {
   name = var.cluster_name
+  
 }
 
 # ─────────────────────────────────────────────────────────────

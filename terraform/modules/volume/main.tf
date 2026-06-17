@@ -8,7 +8,8 @@ resource "aws_efs_file_system" "this" {
 
 # ── Mount targets — one per subnet (one per AZ) ───────────────────
 resource "aws_efs_mount_target" "this" {
-  for_each = toset(var.private_subnet_ids)
+  #for_each = toset(var.private_subnet_ids)
+  count = length(var.private_subnet_ids)
 
   file_system_id  = aws_efs_file_system.this.id
   subnet_id       = each.value  

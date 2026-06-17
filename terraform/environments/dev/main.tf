@@ -99,7 +99,7 @@ module "eks" {
 module "eks-addons" {
   source = "../../modules/eks-addons"
   region = var.aws_region
-  cluster_name = var.project_name 
+  cluster_name = module.eks.cluster_name
 }
 
 module "eks_rbac" {
