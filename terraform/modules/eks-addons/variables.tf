@@ -19,3 +19,11 @@ variable "enable_cluster_autoscaler" {
   type        = bool
   default     = false
 }
+
+variable "cluster_oidc_issuer_url" {
+  type        = string
+}
+
+variable "oidc_provider_arn" {
+  type        = string
+}

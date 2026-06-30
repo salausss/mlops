@@ -16,17 +16,16 @@ data "aws_caller_identity" "current" {}
 #}
 
 data "aws_iam_openid_connect_provider" "eks" {
-  url = data.aws_eks_cluster.primary.identity[0].oidc[0].issuer
+  url = var.cluster_oidc_issuer_url
 }
-
 
 # ─────────────────────────────────────────────────────────────
 # LOCALS
 # ─────────────────────────────────────────────────────────────
 
 locals {
-  oidc_issuer       = replace(data.aws_eks_cluster.primary.identity[0].oidc[0].issuer, "https://", "")
-  oidc_provider_arn = data.aws_iam_openid_connect_provider.eks.arn
+  oidc_issuer       = var.cluster_oidc_issuer_url
+  oidc_provider_arn = var.oidc_provider_arn
 }
 
 # ─────────────────────────────────────────────────────────────
