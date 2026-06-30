@@ -20,7 +20,7 @@ variable "enable_cluster_autoscaler" {
   default     = false
 }
 
-variable "cluster_oidc_issuer_url" {
+variable "oidc_issuer_url" {
   type        = string
 }
 

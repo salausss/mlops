@@ -16,7 +16,7 @@ data "aws_caller_identity" "current" {}
 #}
 
 data "aws_iam_openid_connect_provider" "eks" {
-  url = var.cluster_oidc_issuer_url
+  url = var.oidc_issuer_url
 }
 
 # ─────────────────────────────────────────────────────────────
@@ -24,7 +24,7 @@ data "aws_iam_openid_connect_provider" "eks" {
 # ─────────────────────────────────────────────────────────────
 
 locals {
-  oidc_issuer       = var.cluster_oidc_issuer_url
+  oidc_issuer       = var.oidc_issuer_url
   oidc_provider_arn = var.oidc_provider_arn
 }
 
