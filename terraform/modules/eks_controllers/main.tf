@@ -24,9 +24,10 @@ data "aws_iam_openid_connect_provider" "eks" {
 # ─────────────────────────────────────────────────────────────
 
 locals {
-  oidc_issuer       = replace(data.aws_eks_cluster.primary.identity[0].oidc[0].issuer, "https://", "")
-  oidc_provider_arn = data.aws_iam_openid_connect_provider.eks.arn
+  oidc_issuer       = var.oidc_issuer_url
+  oidc_provider_arn = var.oidc_provider_arn
 }
+
 
 # ─────────────────────────────────────────────────────────────
 # IRSA — AWS LOAD BALANCER CONTROLLER
