@@ -121,6 +121,8 @@ module "alb_controller" {
   cluster_name     = module.eks.cluster_name
   aws_region       = var.aws_region
   vpc_id           = module.vpc.vpc_id
+  oidc_provider_arn  = module.eks.oidc_provider_arn
+  oidc_issuer_url  = module.eks.oidc_provider_url
 }
 
 module "storage" {
@@ -137,8 +139,6 @@ module "storage" {
 #  source = "../../modules/app_deploy"
 #}
 
-
-
 module "SecretsManager" {
   source = "../../modules/secrets-manager"
   cluster_name = module.eks.cluster_name
@@ -150,6 +150,8 @@ module "SecretsManager" {
   db_service_account  = "taskflow-db-sa"
   rotation_days       = 30
   region              = var.aws_region
+  oidc_provider_arn  = module.eks.oidc_provider_arn
+  oidc_issuer_url  = module.eks.oidc_provider_url
 }
 
 module "observability-2" {

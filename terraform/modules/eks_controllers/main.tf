@@ -4,10 +4,6 @@
 
 data "aws_caller_identity" "current" {}
 
-data "aws_eks_cluster" "primary" {
-  name = var.cluster_name
-}
-
 # ─────────────────────────────────────────────────────────────
 # OIDC PROVIDER
 # ─────────────────────────────────────────────────────────────
@@ -19,7 +15,7 @@ data "aws_eks_cluster" "primary" {
 #}
 
 data "aws_iam_openid_connect_provider" "eks" {
-  url = data.aws_eks_cluster.primary.identity[0].oidc[0].issuer
+  url = var.oidc_issuer_url
 }
 
 

@@ -18,3 +18,11 @@ variable "vpc_id" {
   description = "VPC ID where EKS cluster runs"
   type        = string
 }
+
+variable "oidc_issuer_url" {
+  type        = string
+}
+
+variable "oidc_provider_arn" {
+  type        = string
+}

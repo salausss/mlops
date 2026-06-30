@@ -254,12 +254,8 @@ resource "aws_lambda_permission" "secrets_manager_invoke" {
 # 4. IRSA — IAM ROLES FOR SERVICE ACCOUNTS
 # ─────────────────────────────────────────────
 
-data "aws_eks_cluster" "primary" {
-  name = var.cluster_name
-}
-
 data "aws_iam_openid_connect_provider" "eks" {
-  url = data.aws_eks_cluster.primary.identity[0].oidc[0].issuer
+  url = var.oidc_issuer_url
 }
 
 locals {
