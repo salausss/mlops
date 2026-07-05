@@ -255,7 +255,7 @@ resource "aws_lambda_permission" "secrets_manager_invoke" {
 # ─────────────────────────────────────────────
 
 data "aws_iam_openid_connect_provider" "eks" {
-  url = var.oidc_issuer_url
+  url = "https://${var.oidc_issuer_url}"
 }
 
 locals {
