@@ -12,7 +12,7 @@ module "vpc" {
  
 module "s3_bucket" {
   source      = "../../modules/s3"
-  bucket_name = "mlops-dev-uploads"
+  bucket_name = "mlops-dev-uploads-001"
 
   versioning_enabled   = true
   enable_encryption    = true
