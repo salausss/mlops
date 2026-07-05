@@ -28,7 +28,7 @@ variable "service_ipv4_cidr_block" {
 
 variable "public_access_cidr" {
   type    = set(string)
-  default = ["65.0.94.167/32"]
+  default = ["0.0.0.0/0"]
 }
 
 # --- Node Group Names ---
