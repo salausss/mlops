@@ -16,7 +16,7 @@ data "aws_caller_identity" "current" {}
 #}
 
 data "aws_iam_openid_connect_provider" "eks" {
-  url = var.oidc_issuer_url
+  url = "https://${var.oidc_issuer_url}"
 }
 
 # ─────────────────────────────────────────────────────────────
