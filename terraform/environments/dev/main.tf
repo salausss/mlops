@@ -118,11 +118,11 @@ module "eks_rbac" {
 
 module "alb_controller" {
   source = "../../modules/eks_controllers"
-  cluster_name     = module.eks.cluster_name
-  aws_region       = var.aws_region
-  vpc_id           = module.vpc.vpc_id
-  oidc_provider_arn  = module.eks.oidc_provider_arn
-  oidc_issuer_url  = module.eks.oidc_provider_url
+  cluster_name        = module.eks.cluster_name
+  aws_region          = var.aws_region
+  vpc_id              = module.vpc.vpc_id
+  oidc_provider_arn   = module.eks.oidc_provider_arn
+  oidc_issuer_url     = module.eks.oidc_provider_url
 }
 
 module "storage" {
