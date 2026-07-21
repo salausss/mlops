@@ -139,20 +139,20 @@ module "storage" {
 #  source = "../../modules/app_deploy"
 #}
 
-module "SecretsManager" {
-  source = "../../modules/secrets-manager"
-  cluster_name = module.eks.cluster_name
-  env = var.environment
-  kms_key_arn       = module.kms.key_arn         
-  app_namespace       = "app"
-  db_namespace        = "db"
-  app_service_account = "taskflow-app-sa"
-  db_service_account  = "taskflow-db-sa"
-  rotation_days       = 30
-  region              = var.aws_region
-  oidc_provider_arn  = module.eks.oidc_provider_arn
-  oidc_issuer_url  = module.eks.oidc_provider_url
-}
+#module "SecretsManager" {
+#  source = "../../modules/secrets-manager"
+#  cluster_name = module.eks.cluster_name
+#  env = var.environment
+#  kms_key_arn       = module.kms.key_arn         
+#  app_namespace       = "app"
+#  db_namespace        = "db"
+#  app_service_account = "taskflow-app-sa"
+#  db_service_account  = "taskflow-db-sa"
+#  rotation_days       = 30
+#  region              = var.aws_region
+#  oidc_provider_arn  = module.eks.oidc_provider_arn
+#  oidc_issuer_url  = module.eks.oidc_provider_url
+#}
 
 module "observability-2" {
   source = "../../modules/observability"
@@ -166,3 +166,4 @@ module "guardduty" {
   environment = var.environment       
   alert_email = "salauss00@gmail.com"  
 }
+
