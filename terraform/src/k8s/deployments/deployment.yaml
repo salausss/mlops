@@ -36,11 +36,11 @@ spec:
             - name: AWS_REGION
               value: "ap-south-1"
             - name: KNOWLEDGE_BASE_ID
-              value: "<KNOWLEDGE_BASE_ID>"
+              value: "GPIIZYUCQU"
             - name: MODEL_ID
-              value: "<MODEL_ID>"
+              value: "global.anthropic.claude-haiku-4-5-20251001-v1:0"
             - name: DYNAMODB_TABLE
-              value: "rag-api-conversations"
+              value: "mlops-conversations"
           resources:
             requests:
               cpu: "250m"
