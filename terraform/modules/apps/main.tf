@@ -14,7 +14,7 @@ resource "aws_dynamodb_table" "conversations" {
 
 # ---------------- IRSA: IAM role assumable only by this ServiceAccount ----------------
 resource "aws_iam_role" "irsa" {
-  name = "${var.project_name}-irsa-role"
+  name = "${var.project_name}-${var.environment}-bedrock-irsa-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

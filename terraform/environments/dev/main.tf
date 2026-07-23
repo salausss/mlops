@@ -171,6 +171,8 @@ module "app_deploy" {
   source  = "../../modules/apps"
   project_name  = var.project_name
   aws_region   = var.aws_region
+  environment  = var.environment
+  namespace    = "app"
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_provider_url = module.eks.oidc_provider_url
   knowledge_base_id = "GPIIZYUCQU"

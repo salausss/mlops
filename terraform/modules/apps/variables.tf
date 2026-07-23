@@ -10,6 +10,11 @@ variable "project_name" {
   default     = "rag-api"
 }
 
+variable "environment" {
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+}
+
 variable "oidc_provider_arn" {
   description = "IAM OIDC provider ARN for your existing EKS cluster, e.g. arn:aws:iam::<account_id>:oidc-provider/oidc.eks.<region>.amazonaws.com/id/<cluster_oidc_id>"
   type        = string
