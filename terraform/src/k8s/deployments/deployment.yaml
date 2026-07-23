@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+  namespace: rag-api
+  labels:
+    app: rag-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rag-api
+  template:
+    metadata:
+      labels:
+        app: rag-api
+    spec:
+      serviceAccountName: rag-api-sa
+      containers:
+        - name: rag-api
+          # Push your image to ECR and reference it here, e.g.
+          # <account_id>.dkr.ecr.ap-south-1.amazonaws.com/rag-api:latest
+          image: "<ECR_IMAGE_URI>"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              value: "ap-south-1"
+            - name: KNOWLEDGE_BASE_ID
+              value: "<KNOWLEDGE_BASE_ID>"
+            - name: MODEL_ID
+              value: "<MODEL_ID>"
+            - name: DYNAMODB_TABLE
+              value: "rag-api-conversations"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20

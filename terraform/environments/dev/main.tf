@@ -167,3 +167,12 @@ module "guardduty" {
   alert_email = "salauss00@gmail.com"  
 }
 
+module "app_deploy" {
+  source  = "../../modules/apps"
+  project_name  = var.cluster_name
+  aws_region   = var.aws_region
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  #knowledge_base_id = var.bedrock_knowledge_base_id
+  #model_id = var.bedrock_model_id
+}
