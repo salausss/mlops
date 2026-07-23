@@ -5,7 +5,7 @@ metadata:
   namespace: app
   annotations:
     # Paste the irsa_role_arn Terraform output here
-    eks.amazonaws.com/role-arn: aws_iam_role.irsa.arn
+    eks.amazonaws.com/role-arn: arn:aws:iam::844074033173:role/mlops-dev-bedrock-irsa-role
 ---
 apiVersion: apps/v1
 kind: Deployment
