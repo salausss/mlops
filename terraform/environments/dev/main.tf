@@ -169,10 +169,10 @@ module "guardduty" {
 
 module "app_deploy" {
   source  = "../../modules/apps"
-  project_name  = var.cluster_name
+  project_name  = var.project_name
   aws_region   = var.aws_region
   oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_provider_url = module.eks.oidc_provider_url
-  #knowledge_base_id = var.bedrock_knowledge_base_id
-  #model_id = var.bedrock_model_id
+  knowledge_base_id = "GPIIZYUCQU"
+  model_id = "anthropic.claude-haiku-4-5-20251001-v1:0"
 }
