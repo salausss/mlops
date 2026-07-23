@@ -16,5 +16,5 @@ admin_user_arns = [ "arn:aws:iam::929861724743:user/Salah_Abbasi" ]
 developer_user_arns = [ "arn:aws:iam::929861724743:user/developer" ] 
 
 # Bedrock Knowledge Base and Model IDs
-bedrock_knowledge_base_id = "GPIIZYUCQU"
-bedrock_model_id = "anthropic.claude-haiku-4-5-20251001-v1:0"
+#bedrock_knowledge_base_id = "GPIIZYUCQU"
+#bedrock_model_id = "anthropic.claude-haiku-4-5-20251001-v1:0"

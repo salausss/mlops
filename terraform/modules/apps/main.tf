@@ -63,12 +63,3 @@ resource "aws_iam_role_policy" "irsa" {
     ]
   })
 }
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: rag-api-sa
-  namespace: app
-  annotations:
-    # Paste the irsa_role_arn Terraform output here
-    eks.amazonaws.com/role-arn: aws_iam_role.irsa.arn
