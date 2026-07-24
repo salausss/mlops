@@ -38,7 +38,7 @@ spec:
             - name: KNOWLEDGE_BASE_ID
               value: "GPIIZYUCQU"
             - name: MODEL_ID
-              value: "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+              value: "amazon.nova-lite-v1:0"
             - name: DYNAMODB_TABLE
               value: "mlops-conversations"
           resources:
