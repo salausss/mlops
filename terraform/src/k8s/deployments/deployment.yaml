@@ -38,7 +38,7 @@ spec:
             - name: KNOWLEDGE_BASE_ID
               value: "GPIIZYUCQU"
             - name: MODEL_ID
-              value: "amazon.nova-lite-v1:0"
+              value: "apac.amazon.nova-lite-v1:0"
             - name: DYNAMODB_TABLE
               value: "mlops-conversations"
           resources:
