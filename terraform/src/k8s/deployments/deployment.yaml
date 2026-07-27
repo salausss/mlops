@@ -42,6 +42,8 @@ spec:
               value: "global.anthropic.claude-haiku-4-5-20251001-v1:0"
             - name: SESSION_HISTORY_TABLE_NAME
               value: "mlops-conversations"
+            - name: ORDERS_TABLE
+              value: "ORDERS_TABLE"
           resources:
             requests:
               cpu: "250m"
