@@ -19,7 +19,7 @@ AWS_REGION = os.environ.get("AWS_REGION", "ap-south-1")
 KNOWLEDGE_BASE_ID = os.environ["KNOWLEDGE_BASE_ID"]
 MODEL_ID = os.environ["MODEL_ID"]
 ORDERS_TABLE = os.environ.get("ORDERS_TABLE", "orders")
-TOP_K = int(os.environ.get("TOP_K", "3"))
+TOP_K = int(os.environ.get("TOP_K", "10"))
 
 bedrock_agent_rt = boto3.client("bedrock-agent-runtime", region_name=AWS_REGION)
 orders_table = boto3.resource("dynamodb", region_name=AWS_REGION).Table(ORDERS_TABLE)
