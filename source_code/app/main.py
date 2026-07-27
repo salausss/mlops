@@ -18,6 +18,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from agent import run_agent
+from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("rag-api")
@@ -33,6 +34,12 @@ table = dynamodb.Table(SESSION_HISTORY_TABLE_NAME)
 
 app = FastAPI(title="Agentic RAG API Service", version="2.0.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # fine for a demo; lock down for anything real
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class ChatRequest(BaseModel):
     session_id: str = Field(..., min_length=1)
