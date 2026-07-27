@@ -30,6 +30,7 @@ spec:
           # Push your image to ECR and reference it here, e.g.
           # <account_id>.dkr.ecr.ap-south-1.amazonaws.com/rag-api:latest
           image: "844074033173.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
