@@ -12,7 +12,7 @@ RUN useradd --create-home --uid 1000 appuser
 WORKDIR /app
 
 COPY --from=builder /root/.local /home/appuser/.local
-COPY app/main.py .
+COPY app/ .
 
 ENV PATH=/home/appuser/.local/bin:$PATH \
     PYTHONUNBUFFERED=1

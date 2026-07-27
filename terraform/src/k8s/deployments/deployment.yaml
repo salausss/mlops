@@ -39,7 +39,7 @@ spec:
               value: "GPIIZYUCQU"
             - name: MODEL_ID
               value: "apac.amazon.nova-lite-v1:0"
-            - name: DYNAMODB_TABLE
+            - name: SESSION_HISTORY_TABLE_NAME
               value: "mlops-conversations"
           resources:
             requests:

@@ -12,6 +12,16 @@ resource "aws_dynamodb_table" "conversations" {
   }
 }
 
+resource "aws_dynamodb_table" "ORDERS_TABLE" {
+  name         = "ORDERS_TABLE"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "order_id"
+  attribute {
+    name = "order_id"
+    type = "S"
+  }
+}
+
 # ---------------- IRSA: IAM role assumable only by this ServiceAccount ----------------
 resource "aws_iam_role" "irsa" {
   name = "${var.project_name}-${var.environment}-bedrock-irsa-role"
