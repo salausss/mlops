@@ -19,9 +19,13 @@ AWS_REGION = os.environ.get("AWS_REGION", "ap-south-1")
 KNOWLEDGE_BASE_ID = os.environ["KNOWLEDGE_BASE_ID"]
 MODEL_ID = os.environ["MODEL_ID"]
 ORDERS_TABLE = os.environ.get("ORDERS_TABLE", "orders")
-TOP_K = int(os.environ.get("TOP_K", "10"))
+TOP_K = int(os.environ.get("TOP_K", "3"))
+# S3 bucket that backs your Knowledge Base's data source (Phase 1/2)
+KB_SOURCE_BUCKET = os.environ["KB_SOURCE_BUCKET"]
+KB_SOURCE_PREFIX = os.environ.get("KB_SOURCE_PREFIX", "")
 
 bedrock_agent_rt = boto3.client("bedrock-agent-runtime", region_name=AWS_REGION)
+s3_client = boto3.client("s3", region_name=AWS_REGION)
 orders_table = boto3.resource("dynamodb", region_name=AWS_REGION).Table(ORDERS_TABLE)
 
 
@@ -47,8 +51,30 @@ def search_knowledge_base(query: str) -> str:
     return "\n\n".join(chunks) if chunks else "No relevant context found."
 
 
+@tool
+def list_available_documents() -> str:
+    """List the names of all documents currently available in the knowledge
+    base. Use this when the user asks what documents/data exist, whose
+    resume is on file, or any question about the collection itself rather
+    than its content."""
+    try:
+        paginator = s3_client.get_paginator("list_objects_v2")
+        names = []
+        for page in paginator.paginate(Bucket=KB_SOURCE_BUCKET, Prefix=KB_SOURCE_PREFIX):
+            for obj in page.get("Contents", []):
+                key = obj["Key"]
+                if not key.endswith("/"):  # skip folder placeholder entries
+                    names.append(key)
+    except Exception as exc:
+        return f"Could not list documents: {exc}"
+
+    if not names:
+        return "No documents found in the knowledge base source bucket."
+    return "Documents available in the knowledge base:\n" + "\n".join(f"- {n}" for n in names)
+
+
 llm = ChatBedrockConverse(model=MODEL_ID, region_name=AWS_REGION)
-tools = [check_order_status, search_knowledge_base]
+tools = [check_order_status, search_knowledge_base, list_available_documents]
 llm_with_tools = llm.bind_tools(tools)
 
 
@@ -69,8 +95,14 @@ _graph.add_edge("tools", "agent")
 compiled_graph = _graph.compile()
 
 
-def run_agent(history: list[dict], user_message: str) -> str:
-    """history: list of {'role': 'user'|'assistant', 'content': str} from DynamoDB."""
+def run_agent(history: list[dict], user_message: str) -> tuple[str, dict]:
+    """history: list of {'role': 'user'|'assistant', 'content': str} from DynamoDB.
+
+    Returns (answer, usage) where usage is
+    {"input_tokens": int, "output_tokens": int, "total_tokens": int} -
+    summed across every model call in this turn (the agent may call the
+    model more than once if a tool gets invoked along the way).
+    """
     messages = []
     for turn in history:
         cls = HumanMessage if turn["role"] == "user" else AIMessage
@@ -78,4 +110,13 @@ def run_agent(history: list[dict], user_message: str) -> str:
     messages.append(HumanMessage(content=user_message))
 
     result = compiled_graph.invoke({"messages": messages})
-    return result["messages"][-1].content
+
+    usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+    for msg in result["messages"]:
+        meta = getattr(msg, "usage_metadata", None)
+        if meta:
+            usage["input_tokens"] += meta.get("input_tokens", 0)
+            usage["output_tokens"] += meta.get("output_tokens", 0)
+            usage["total_tokens"] += meta.get("total_tokens", 0)
+
+    return result["messages"][-1].content, usage

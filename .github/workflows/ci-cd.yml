@@ -1,0 +1,116 @@
+name: CI/CD - RAG API
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: frontend
+  EKS_CLUSTER_NAME: mlops
+  K8S_NAMESPACE: app
+  K8S_DEPLOYMENT: rag-api
+  K8S_CONTAINER_NAME: 844074033173.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest
+
+permissions:
+  id-token: write   # required for OIDC auth to AWS - no static access keys
+  contents: read
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+.f;f,f,,f,trewqqtyjhbvc
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check app/ tests/
+
+      - name: Run unit tests (Bedrock calls are mocked)
+        run: pytest tests/ -v
+
+  build-and-push:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: vars
+        run: echo "image_tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
+        run: |
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
+          docker tag "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GHA_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Get ECR registry URI
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Deploy new image to EKS
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+        run: |
+          kubectl set image deployment/"$K8S_DEPLOYMENT" \
+            "$K8S_CONTAINER_NAME"="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" \
+            -n "$K8S_NAMESPACE"
+          kubectl rollout status deployment/"$K8S_DEPLOYMENT" -n "$K8S_NAMESPACE" --timeout=180s
+
+      - name: Get Ingress hostname
+        id: ingress
+        run: |
+          HOST=$(kubectl get ingress rag-api-ingress -n "$K8S_NAMESPACE" \
+            -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test /health
+        run: |
+          for i in $(seq 1 10); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${{ steps.ingress.outputs.host }}/health")
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i: got status $STATUS, retrying in 5s..."
+            sleep 5
+          done
+          echo "Health check failed after 10 attempts"
+          exit 1

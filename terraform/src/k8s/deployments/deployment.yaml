@@ -63,3 +63,15 @@ spec:
               port: 8000
             initialDelaySeconds: 15
             periodSeconds: 20
+        - name: xray-daemon
+          image: amazon/aws-xray-daemon:latest
+          ports:
+            - containerPort: 2000
+              protocol: UDP
+          resources:
+            requests:
+              cpu: "32m"
+              memory: "24Mi"
+            limits:
+              cpu: "128m"
+              memory: "64Mi"

@@ -5,3 +5,4 @@ pydantic==2.9.2
 langgraph==0.2.45
 langchain-aws==0.2.7
 langchain-core==0.3.15
+aws-xray-sdk==2.14.0
