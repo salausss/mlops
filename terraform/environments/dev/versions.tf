@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.5.0"
   
   backend "s3" {
-    bucket         = "mlops-terraform-844074033173-ap-south-1-an"
+    bucket         = "tf-remote-state--aps1-az1--x-s3"
     key            = "dev/terraform.tfstate"
     region         = "ap-south-1"
     use_lockfile   = true
